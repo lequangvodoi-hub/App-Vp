@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Văn Phòng Linh Thú ĐTCL — Sếp Claude & 4 AI Agent (C# Core)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Chakra+Petch:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <!-- Top TFT Hextech Tactical Header -->
+  <header class="tft-header">
+    <div class="brand-cluster">
+      <div class="hextech-crest">
+        <span class="crest-core">⚔️</span>
+      </div>
+      <div>
+        <div class="eyebrow-tag">C# .NET 8 CORE • ĐẤU TRƯỜNG CHÂN LÝ (TFT 18.2 – 18.5) • OFFICE SIMULATOR</div>
+        <h1 class="app-title">VĂN PHÒNG LINH THÚ TÍ NỊ — SẾP CLAUDE ĐIỀU PHỐI</h1>
+      </div>
+    </div>
+
+    <div class="header-synergies" id="synergyBar">
+      <span class="synergy-pill gold">👑 Sếp Tổng Claude (1/1)</span>
+      <span class="synergy-pill crimson">🛡️ T1 Galio • Sửa PDF</span>
+      <span class="synergy-pill cyan">⚡ PsyOps Zeri • Sửa Word</span>
+      <span class="synergy-pill ruby">🎭 Blood Moon Jhin • Sửa Excel</span>
+      <span class="synergy-pill neon">🔥 Soul Fighter Jinx • Sửa PPT</span>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-hex btn-secondary" id="btnShowPlaylistModal" title="Xem 4 Video Gốc & Các Góc Nhân Vật ĐTCL">
+        🎬 4 Video & Góc Linh Thú
+      </button>
+      <button class="btn-hex btn-gold" id="btnDispatchAllQuick" title="Ra lệnh cho Sếp Claude điều phối cả 4 Linh Thú cùng lúc">
+        ⚡ Lệnh Toàn Văn Phòng (4 Agent)
+      </button>
+    </div>
+  </header>
+
+  <!-- Main 3-Column Tactical Workspace -->
+  <main class="tactical-grid">
+    <!-- Left Column: Boss Claude Console & TFT Synergy Roster -->
+    <aside class="panel left-panel">
+      <!-- Boss Claude Card -->
+      <section class="boss-card" id="bossCard">
+        <div class="boss-header">
+          <div class="boss-avatar-wrap">
+            <img src="/assets/sprites/claude/idle.png" alt="Sếp Claude" class="boss-avatar" id="bossAvatarImg" />
+            <span class="boss-badge">SẾP TỔNG</span>
+          </div>
+          <div class="boss-meta">
+            <h2>Sếp Claude</h2>
+            <p class="boss-role">Giám Đốc Phân Tích & Điều Phối AI Agent</p>
+            <div class="boss-stats">
+              <span class="stat-chip">Lệnh đã giao: <strong id="bossCmdCount">0</strong></span>
+              <span class="stat-chip state-online" id="bossStateBadge">Đang Trực</span>
+            </div>
+          </div>
+        </div>
+        <div class="boss-thought" id="bossThoughtBox">
+          "Hãy nhập yêu cầu công việc bên dưới. Tôi sẽ phân tích và bắn Chưởng Lực giao việc cho T1 Galio (PDF), Zeri (Word), Jhin (Excel) hoặc Jinx (PowerPoint)!"
+        </div>
+      </section>
+
+      <!-- Command Input Form to Boss Claude -->
+      <section class="command-console">
+        <div class="section-title-row">
+          <h3>📣 RA LỆNH CHO SẾP CLAUDE</h3>
+          <select id="targetAgentSelect" class="tft-select" title="Chọn Agent hoặc để Sếp Claude tự phân tích">
+            <option value="auto">🧠 Claude Tự Phân Tích & Chọn Agent</option>
+            <option value="all">🌟 Cả 4 Linh Thú (PDF + Word + Excel + PPT)</option>
+            <option value="galio">🛡️ #1 T1 Galio Tí Nị (Chuyên Sửa PDF)</option>
+            <option value="zeri">⚡ #2 Zeri Đặc Vụ Siêu Linh (Chuyên Sửa Word)</option>
+            <option value="jhin">🎭 #3 Jhin Huyết Nguyệt (Chuyên Sửa Excel)</option>
+            <option value="jinx">🔥 #4 Jinx Lam Hoả Bộc Phá (Chuyên Sửa PowerPoint)</option>
+          </select>
+        </div>
+
+        <textarea id="commandInput" rows="3" placeholder="Ví dụ: Sếp Claude hãy phân tích báo cáo Quý 4: giao Galio sửa và đóng dấu PDF, Zeri sửa hợp đồng Word, Jhin lập bảng Excel 4 nhịp, Jinx thiết kế Slide PowerPoint..."></textarea>
+
+        <!-- File attachment & options -->
+        <div class="command-options-row">
+          <label class="file-upload-btn" for="fileAttachInput" title="Đính kèm tài liệu cần sửa (.pdf, .docx, .xlsx, .pptx, .txt)">
+            📎 <span id="attachedFileLabel">Đính kèm file cần sửa</span>
+            <input type="file" id="fileAttachInput" accept=".pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.txt,.csv,.md" hidden />
+          </label>
+          <label class="checkbox-pill" title="Bật/tắt hiệu ứng Finisher Cutscene từ video ĐTCL khi hoàn thành">
+            <input type="checkbox" id="chkFinisherVideo" checked />
+            <span>🎬 Phát Finisher ĐTCL</span>
+          </label>
+        </div>
+
+        <button class="btn-hex btn-dispatch-main" id="btnSendCommand">
+          <span>🚀 GỬI LỆNH CHO SẾP CLAUDE PHÂN TÍCH & ĐIỀU PHỐI</span>
+        </button>
+
+        <!-- Preset Quick Commands -->
+        <div class="preset-commands">
+          <div class="preset-label">Kịch bản mẫu 1-Click:</div>
+          <div class="preset-grid">
+            <button class="preset-chip" data-target="all" data-cmd="Sếp Claude hãy triển khai Chiến dịch Tổng kết Năm: T1 Galio sửa & đóng dấu bảo mật PDF, Zeri biên tập hợp đồng Word, Jhin lập bảng tài chính Excel 4 Quý, và Jinx thiết kế bộ Slide PowerPoint thuyết trình!">
+              🌟 Tổng hợp cả 4 Agent (PDF + Word + Excel + PPT)
+            </button>
+            <button class="preset-chip" data-target="galio" data-cmd="Sếp Claude bảo T1 Galio sửa file PDF báo cáo kiểm định, căn chuẩn lề A4 và đóng dấu bảo mật Khiên Durand T1!">
+              🛡️ Galio: Sửa & Đóng dấu PDF
+            </button>
+            <button class="preset-chip" data-target="zeri" data-cmd="Sếp Claude giao Zeri Đặc Vụ Siêu Linh rà soát lỗi chính tả, định dạng Heading và sửa hợp đồng thương mại Word (.docx)!">
+              ⚡ Zeri: Sửa Hợp đồng Word
+            </button>
+            <button class="preset-chip" data-target="jhin" data-cmd="Sếp Claude giao Jhin Huyết Nguyệt sửa bảng tính Excel (.xlsx), gắn công thức SUM/AVERAGE và đối soát KPI 4 Quý!">
+              🎭 Jhin: Sửa Bảng tính Excel
+            </button>
+            <button class="preset-chip" data-target="jinx" data-cmd="Sếp Claude giao Jinx Lam Hoả Bộc Phá sửa bố cục Slide PowerPoint (.pptx) 16:9 với hiệu ứng thuyết trình bùng nổ!">
+              🔥 Jinx: Sửa Slide PowerPoint
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 TFT Little Legends Roster Cards -->
+      <section class="roster-section">
+        <div class="section-title-row">
+          <h3>🐉 ĐỘI HÌNH 4 LINH THÚ AI AGENT</h3>
+          <span class="subtle-hint">Click để xem 4 góc & kỹ năng</span>
+        </div>
+        <div class="agent-roster-list" id="agentRosterList">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </section>
+    </aside>
+
+    <!-- Center Column: Interactive 3D Isometric Office Map & Live Simulation -->
+    <section class="center-stage">
+      <!-- Map Toolbar -->
+      <div class="stage-toolbar">
+        <div class="toolbar-left">
+          <span class="live-dot"></span>
+          <span class="stage-title">MÔ HÌNH VĂN PHÒNG 3D ISOMETRIC (CLICK LÊN SÀN ĐỂ DI CHUYỂN LINH THÚ)</span>
+        </div>
+        <div class="toolbar-controls">
+          <div class="segmented-toggle" id="renderModeToggle">
+            <button class="seg-btn active" data-mode="sprite" title="Hiển thị Sprite Linh Thú 3D tách nền trong suốt">
+              ✨ Sprite 3D Trong Suốt
+            </button>
+            <button class="seg-btn" data-mode="video_angle" title="Hiển thị hình ảnh các góc Ctrl+1..4 cắt trực tiếp từ 4 Video ĐTCL">
+              🎥 Góc Video ĐTCL (Ctrl+1..4)
+            </button>
+          </div>
+          <button class="btn-mini" id="btnAllEmoteCycle" title="Đồng loạt đổi góc Ctrl+1 -> Ctrl+4 cho cả 4 Linh Thú">
+            🔄 Đổi Góc (Ctrl+1..4)
+          </button>
+          <button class="btn-mini" id="btnResetPositions" title="Đưa toàn bộ Linh Thú về đúng bàn làm việc">
+            🏠 Về Bàn Làm Việc
+          </button>
+        </div>
+      </div>
+
+      <!-- 3D Isometric Office Map Viewport -->
+      <div class="office-viewport" id="officeViewport">
+        <div class="office-map-container" id="officeMapContainer">
+          <!-- Attached 3D Isometric Office Floorplan -->
+          <img src="/assets/office_map.png" alt="3D Isometric Office Floorplan" class="office-floor-img" id="officeFloorImg" draggable="false" />
+
+          <!-- Particle & Boom Projectile Canvas Overlay -->
+          <canvas id="fxCanvas" class="fx-canvas"></canvas>
+
+          <!-- Interactive Room Labels / Hotspots on the 3D Office Map -->
+          <div class="zone-hotspot zone-claude" style="left: 30.5%; top: 24.5%;" data-zone="claude_office">
+            <span class="zone-icon">👑</span>
+            <span class="zone-name">Phòng Sếp Claude</span>
+          </div>
+          <div class="zone-hotspot zone-conference" style="left: 44.5%; top: 19.5%;" data-zone="conference">
+            <span class="zone-icon">📋</span>
+            <span class="zone-name">Phòng Họp Chiến Thuật</span>
+          </div>
+          <div class="zone-hotspot zone-galio" style="left: 29.5%; top: 65.5%;" data-zone="desk_galio">
+            <span class="zone-icon">🛡️</span>
+            <span class="zone-name">Bàn 1: Sửa PDF (T1 Galio)</span>
+          </div>
+          <div class="zone-hotspot zone-zeri" style="left: 40.5%; top: 43.0%;" data-zone="desk_zeri">
+            <span class="zone-icon">⚡</span>
+            <span class="zone-name">Bàn 2: Sửa Word (PsyOps Zeri)</span>
+          </div>
+          <div class="zone-hotspot zone-jhin" style="left: 53.5%; top: 38.5%;" data-zone="desk_jhin">
+            <span class="zone-icon">🎭</span>
+            <span class="zone-name">Bàn 3: Sửa Excel (Blood Moon Jhin)</span>
+          </div>
+          <div class="zone-hotspot zone-jinx" style="left: 47.5%; top: 77.5%;" data-zone="desk_jinx">
+            <span class="zone-icon">🔥</span>
+            <span class="zone-name">Bàn 4: Sửa PPT (Soul Fighter Jinx)</span>
+          </div>
+          <div class="zone-hotspot zone-vault" style="left: 79.0%; top: 14.5%;" data-zone="vault">
+            <span class="zone-icon">🌀</span>
+            <span class="zone-name">Cổng Dịch Chuyển & Kho File</span>
+          </div>
+
+          <!-- Dynamic Character Entities Layer (Boss Claude + 4 TFT Little Legends) -->
+          <div id="entitiesLayer" class="entities-layer"></div>
+
+          <!-- Live Finisher Cutscene PIP Overlay inside Map -->
+          <div class="finisher-pip hidden" id="finisherPip">
+            <div class="finisher-pip-header">
+              <span id="finisherPipTitle">💥 HIỆU ỨNG KẾT LIỄU ĐTCL (FINISHER CUTSCENE)</span>
+              <button class="pip-close" id="btnClosePip">✕</button>
+            </div>
+            <video id="finisherPipVideo" muted playsinline></video>
+            <div class="finisher-pip-caption" id="finisherPipCaption"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Tactical Timeline & Claude Orchestration Feed -->
+      <div class="timeline-console">
+        <div class="timeline-header">
+          <span>📡 NHẬT KÝ ĐIỀU PHỐI CỦA SẾP CLAUDE & HIỆU ỨNG LINH THÚ</span>
+          <span class="timeline-status" id="timelineStatusBadge">Sẵn sàng nhận lệnh</span>
+        </div>
+        <div class="timeline-feed" id="timelineFeed">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Selected TFT Agent 4-Angle Inspector & Generated Document Vault -->
+    <aside class="panel right-panel">
+      <!-- Selected TFT Agent Multi-Angle & Video Inspector -->
+      <section class="inspector-card" id="agentInspector">
+        <!-- Populated dynamically by app.js -->
+      </section>
+
+      <!-- Real Generated / Edited Documents Vault (.pdf, .docx, .xlsx, .pptx) -->
+      <section class="vault-section">
+        <div class="section-title-row">
+          <h3>📂 KHO TÀI LIỆU ĐÃ XỬ LÝ (C# ENGINE)</h3>
+          <span class="badge-count" id="docCountBadge">4 files</span>
+        </div>
+        <div class="vault-list" id="vaultList">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <!-- Modal 1: Document Content Preview & Download -->
+  <div class="modal-backdrop hidden" id="docPreviewModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="previewModalTitle">Chi Tiết Tài Liệu Đã Xử Lý</h3>
+        <button class="modal-close" id="btnCloseDocModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="doc-meta-strip" id="previewModalMeta"></div>
+        <pre class="doc-preview-code" id="previewModalContent"></pre>
+      </div>
+      <div class="modal-footer">
+        <a href="#" id="previewModalDownloadBtn" class="btn-hex btn-gold" download>⬇️ Tải File Thực Tế Về Máy</a>
+        <button class="btn-hex btn-secondary" id="btnCloseDocModal2">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: All 4 YouTube Videos & Multi-Angle Gallery Showcase -->
+  <div class="modal-backdrop hidden" id="playlistGalleryModal">
+    <div class="modal-box modal-xl">
+      <div class="modal-header">
+        <h3>🎬 BỘ SƯU TẬP 4 VIDEO ĐTCL GỐC & HÌNH ẢNH CÁC GÓC LINH THÚ TÍ NỊ</h3>
+        <button class="modal-close" id="btnCloseGalleryModal">✕</button>
+      </div>
+      <div class="modal-body" id="galleryModalBody">
+        <!-- Populated by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
